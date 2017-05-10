@@ -183,7 +183,12 @@ public class NewJDialog extends javax.swing.JDialog {
                 Process proc;
                 try {
                     if (jarFilePath != null && jarFilePath.length() > 0 && jarFilePath.contains("jar")) {
-                        proc = Runtime.getRuntime().exec("java -jar " + jarFilePath);
+                        String cmd = "java -jar " + jarFilePath
+                                + " " + mintosFilePath
+                                + " " + twinoFilePath
+                                + " " + viventorFilePath;
+                        proc = Runtime.getRuntime().exec(cmd);
+                        jTextArea1.append("Running: " + cmd);
                         InputStream is = proc.getInputStream();
                         for (byte b = (byte) is.read(); b > -1; b = (byte) is.read()) {
                             //System.out.print((char) b);
