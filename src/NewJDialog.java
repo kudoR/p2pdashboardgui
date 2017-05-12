@@ -1,4 +1,5 @@
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -21,6 +22,7 @@ public class NewJDialog extends javax.swing.JDialog {
     private String mintosFilePath = "";
     private String twinoFilePath = "";
     private String viventorFilePath = "";
+    private Process proc;
 
     /**
      * Creates new form NewJDialog
@@ -54,6 +56,9 @@ public class NewJDialog extends javax.swing.JDialog {
         jTextField4 = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -106,6 +111,18 @@ public class NewJDialog extends javax.swing.JDialog {
             }
         });
 
+        jLabel5.setText("Status");
+
+        jLabel6.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel6.setText("Server not running");
+
+        jButton6.setText("Shutdown");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -138,7 +155,13 @@ public class NewJDialog extends javax.swing.JDialog {
                                             .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 835, Short.MAX_VALUE))))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 835, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(124, 124, 124)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -167,8 +190,18 @@ public class NewJDialog extends javax.swing.JDialog {
                     .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(onClickRunDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -180,7 +213,7 @@ public class NewJDialog extends javax.swing.JDialog {
 
         new Thread() {
             public void run() {
-                Process proc;
+
                 try {
                     if (jarFilePath != null && jarFilePath.length() > 0 && jarFilePath.contains("jar")) {
                         String cmd = "java -jar " + jarFilePath
@@ -188,6 +221,7 @@ public class NewJDialog extends javax.swing.JDialog {
                                 + " " + twinoFilePath
                                 + " " + viventorFilePath;
                         proc = Runtime.getRuntime().exec(cmd);
+                        updateLabelServerRunning(proc.isAlive());
                         jTextArea1.append("Running: " + cmd);
                         InputStream is = proc.getInputStream();
                         for (byte b = (byte) is.read(); b > -1; b = (byte) is.read()) {
@@ -203,7 +237,32 @@ public class NewJDialog extends javax.swing.JDialog {
                 }
             }
         }.start();
+
+        new Thread() {
+            public void run() {
+                while (true) {
+                    updateLabelServerRunning(proc != null ? proc.isAlive() : false);
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(NewJDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+
+        }.start();
     }//GEN-LAST:event_onClickRunDashboardActionPerformed
+
+    private void updateLabelServerRunning(boolean b) {
+        if (b) {
+            jLabel6.setText("Server is running");
+            jLabel6.setForeground(Color.GREEN);
+
+        } else {
+            jLabel6.setText("Server is not running");
+            jLabel6.setForeground(Color.RED);
+        }
+    }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         this.jarFilePath = this.showFileChooserAndHandleReturnValue(jTextField1);
@@ -222,6 +281,11 @@ public class NewJDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.viventorFilePath = this.showFileChooserAndHandleReturnValue(jTextField4);
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        jTextArea1.append("Shutting Server down...");
+        proc.destroy();
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     private String showFileChooserAndHandleReturnValue(JTextField jTextField) {
         JFileChooser fileChooser = new JFileChooser();
@@ -272,10 +336,13 @@ public class NewJDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
