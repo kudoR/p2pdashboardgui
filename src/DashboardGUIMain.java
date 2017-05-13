@@ -1,7 +1,12 @@
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +41,7 @@ public class DashboardGUIMain extends javax.swing.JDialog {
             this.db = new DashboardGUIDatabase();
             String jarPath = this.db.readJarPath();
             jTextField1.setText(jarPath);
-            this.jarFilePath=jarPath;
+            this.jarFilePath = jarPath;
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -232,6 +237,12 @@ public class DashboardGUIMain extends javax.swing.JDialog {
                                 + " " + viventorFilePath;
                         proc = Runtime.getRuntime().exec(cmd);
                         updateLabelServerRunning(proc.isAlive());
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        openDashboardInBrowser();
                         jTextArea1.append("Running: " + cmd);
                         InputStream is = proc.getInputStream();
                         for (byte b = (byte) is.read(); b > -1; b = (byte) is.read()) {
@@ -246,6 +257,7 @@ public class DashboardGUIMain extends javax.swing.JDialog {
                     Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+
         }.start();
 
         new Thread() {
@@ -263,6 +275,33 @@ public class DashboardGUIMain extends javax.swing.JDialog {
         }.start();
     }//GEN-LAST:event_onClickRunDashboardActionPerformed
 
+    private void openDashboardInBrowser() {
+        try {
+            openWebpage(new URL("http://localhost:8080"));
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void openWebpage(URI uri) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(uri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void openWebpage(URL url) {
+        try {
+            openWebpage(url.toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void updateLabelServerRunning(boolean b) {
         if (b) {
             jLabel6.setText("Server is running");
@@ -276,7 +315,7 @@ public class DashboardGUIMain extends javax.swing.JDialog {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         this.jarFilePath = this.showFileChooserAndHandleReturnValue(jTextField1);
-        if (this.db!=null) {
+        if (this.db != null) {
             try {
                 this.db.saveJarPath(jarFilePath);
             } catch (SQLException ex) {
