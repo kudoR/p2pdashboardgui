@@ -2,6 +2,7 @@
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -16,20 +17,29 @@ import javax.swing.JTextField;
  *
  * @author J
  */
-public class NewJDialog extends javax.swing.JDialog {
+public class DashboardGUIMain extends javax.swing.JDialog {
 
     private String jarFilePath = "";
     private String mintosFilePath = "";
     private String twinoFilePath = "";
     private String viventorFilePath = "";
     private Process proc;
+    private DashboardGUIDatabase db;
 
     /**
      * Creates new form NewJDialog
      */
-    public NewJDialog(java.awt.Frame parent, boolean modal) {
+    public DashboardGUIMain(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        try {
+            this.db = new DashboardGUIDatabase();
+            String jarPath = this.db.readJarPath();
+            jTextField1.setText(jarPath);
+            this.jarFilePath=jarPath;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -233,7 +243,7 @@ public class NewJDialog extends javax.swing.JDialog {
                     }
 
                 } catch (IOException ex) {
-                    Logger.getLogger(NewJDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }.start();
@@ -245,7 +255,7 @@ public class NewJDialog extends javax.swing.JDialog {
                     try {
                         Thread.sleep(10000);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(NewJDialog.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -266,6 +276,13 @@ public class NewJDialog extends javax.swing.JDialog {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         this.jarFilePath = this.showFileChooserAndHandleReturnValue(jTextField1);
+        if (this.db!=null) {
+            try {
+                this.db.saveJarPath(jarFilePath);
+            } catch (SQLException ex) {
+                Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -284,6 +301,8 @@ public class NewJDialog extends javax.swing.JDialog {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         jTextArea1.append("Shutting Server down...");
+        jLabel6.setText("Server is shutting down...");
+        jLabel6.setForeground(Color.ORANGE);
         proc.destroy();
     }//GEN-LAST:event_jButton6ActionPerformed
 
@@ -310,8 +329,9 @@ public class NewJDialog extends javax.swing.JDialog {
         try {
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DashboardGUIMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         //</editor-fold>
@@ -319,7 +339,7 @@ public class NewJDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                NewJDialog dialog = new NewJDialog(new javax.swing.JFrame(), true);
+                DashboardGUIMain dialog = new DashboardGUIMain(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
