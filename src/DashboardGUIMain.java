@@ -257,10 +257,10 @@ public class DashboardGUIMain extends javax.swing.JDialog {
 
                 try {
                     if (jarFilePath != null && jarFilePath.length() > 0 && jarFilePath.contains("jar")) {
-                        String cmd = "java -jar " + jarFilePath
-                                + " " + mintosFilePath
-                                + " " + twinoFilePath
-                                + " " + viventorFilePath;
+                        String cmd = "java -jar \"" + jarFilePath + "\""
+                                + " \"" + mintosFilePath + "\""
+                                + " \"" + twinoFilePath + "\""
+                                + " \"" + viventorFilePath + "\"";
                         proc = Runtime.getRuntime().exec(cmd);
                         updateLabelServerRunning(proc.isAlive());
                         try {
