@@ -30,24 +30,24 @@ public class DashboardGUIDatabase {
         conn.close();
     }
 
-    public void saveJarPath(String jarPath) throws SQLException {
-        System.out.println("Saving Jar Path: " + jarPath);
+    public void savePathForKey(String key, String path) throws SQLException {
+        
         Statement s = conn.createStatement();
-        ResultSet rs = s.executeQuery("select 1 from s where KEY='JAR'");
+        ResultSet rs = s.executeQuery("select 1 from s where KEY='" + path + "'");
         if (rs.next() && rs.getBoolean(1)) {
             // update
             s = conn.createStatement();
-            s.executeUpdate("update s set value='" + jarPath + "' where key='JAR'");
+            s.executeUpdate("update s set value='" + path + "' where key='" + path + "'");
         } else {
             // insert
             s = conn.createStatement();
-            s.executeUpdate("insert into s values ('JAR','" + jarPath + "')");
+            s.executeUpdate("insert into s values ('" + path + "','" + path + "')");
         }
     }
 
-    public String readJarPath() throws SQLException {
+    public String readPathForKey(String key) throws SQLException {
         Statement s = conn.createStatement();
-        ResultSet rs = s.executeQuery("select VALUE from s where KEY='JAR'");
+        ResultSet rs = s.executeQuery("select VALUE from s where KEY='" + key + "'");
         if (rs.next()) {
             return rs.getNString(1);
         }

@@ -39,12 +39,38 @@ public class DashboardGUIMain extends javax.swing.JDialog {
         initComponents();
         try {
             this.db = new DashboardGUIDatabase();
-            String jarPath = this.db.readJarPath();
-            jTextField1.setText(jarPath);
-            this.jarFilePath = jarPath;
+            String jarPath = this.db.readPathForKey("JAR");
+            setJarPath(jarPath);
+            String mintosPath = this.db.readPathForKey("MINTOS");
+            setMintosPath(mintosPath);
+            String twinoPath = this.db.readPathForKey("TWINO");
+            setTwinoPath(twinoPath);
+            String viventorPath = this.db.readPathForKey("VIVENTOR");
+            setViventorPath(viventorPath);
+            
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void setJarPath(String jarPath) {
+        jTextField1.setText(jarPath);
+        this.jarFilePath = jarPath;
+    }
+    
+    private void setMintosPath(String mintosPath) {
+        jTextField2.setText(mintosPath);
+        this.mintosFilePath = mintosPath;
+    }
+    
+    private void setTwinoPath(String twinoPath) {
+        jTextField3.setText(twinoPath);
+        this.twinoFilePath = twinoPath;
+    }
+    
+    private void setViventorPath(String viventorPath) {
+        jTextField4.setText(viventorPath);
+        this.mintosFilePath = viventorPath;
     }
 
     /**
@@ -317,7 +343,7 @@ public class DashboardGUIMain extends javax.swing.JDialog {
         this.jarFilePath = this.showFileChooserAndHandleReturnValue(jTextField1);
         if (this.db != null) {
             try {
-                this.db.saveJarPath(jarFilePath);
+                this.db.savePathForKey("JAR",jarFilePath);
             } catch (SQLException ex) {
                 Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -326,16 +352,37 @@ public class DashboardGUIMain extends javax.swing.JDialog {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         this.mintosFilePath = this.showFileChooserAndHandleReturnValue(jTextField2);
+        if (this.db != null) {
+            try {
+                this.db.savePathForKey("MINTOS",mintosFilePath);
+            } catch (SQLException ex) {
+                Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         this.twinoFilePath = this.showFileChooserAndHandleReturnValue(jTextField3);
+        if (this.db != null) {
+            try {
+                this.db.savePathForKey("TWINO",twinoFilePath);
+            } catch (SQLException ex) {
+                Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         this.viventorFilePath = this.showFileChooserAndHandleReturnValue(jTextField4);
+        if (this.db != null) {
+            try {
+                this.db.savePathForKey("VIVENTOR",viventorFilePath);
+            } catch (SQLException ex) {
+                Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
