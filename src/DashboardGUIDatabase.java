@@ -23,7 +23,7 @@ public class DashboardGUIDatabase {
         conn = DriverManager.
                 getConnection("jdbc:h2:~/p2pdash_gui_db", "sa", "");
         Statement s = conn.createStatement();
-        s.executeUpdate("create table if not exists s (KEY VARCHAR(50), VALUE VARCHAR(255))");
+        s.executeUpdate("create table if not exists s (KEY VARCHAR(255), VALUE VARCHAR(255))");
     }
 
     public void closeConnection() throws SQLException {
@@ -33,15 +33,15 @@ public class DashboardGUIDatabase {
     public void savePathForKey(String key, String path) throws SQLException {
         
         Statement s = conn.createStatement();
-        ResultSet rs = s.executeQuery("select 1 from s where KEY='" + path + "'");
+        ResultSet rs = s.executeQuery("select 1 from s where KEY='" + key + "'");
         if (rs.next() && rs.getBoolean(1)) {
             // update
             s = conn.createStatement();
-            s.executeUpdate("update s set value='" + path + "' where key='" + path + "'");
+            s.executeUpdate("update s set value='" + path + "' where key='" + key + "'");
         } else {
             // insert
             s = conn.createStatement();
-            s.executeUpdate("insert into s values ('" + path + "','" + path + "')");
+            s.executeUpdate("insert into s (KEY,VALUE) values ('" + key + "','" + path + "')");
         }
     }
 
