@@ -70,7 +70,7 @@ public class DashboardGUIMain extends javax.swing.JDialog {
     
     private void setViventorPath(String viventorPath) {
         jTextField4.setText(viventorPath);
-        this.mintosFilePath = viventorPath;
+        this.viventorFilePath = viventorPath;
     }
 
     /**
@@ -269,7 +269,11 @@ public class DashboardGUIMain extends javax.swing.JDialog {
                             Logger.getLogger(DashboardGUIMain.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         openDashboardInBrowser();
-                        jTextArea1.append("Running: " + cmd);
+                        jTextArea1.append("Running: \n");
+                        jTextArea1.append("COMMAND:\n");
+                        jTextArea1.append("________________________________\n");
+                        jTextArea1.append(cmd + "\n");
+                        jTextArea1.append("________________________________\n");
                         InputStream is = proc.getInputStream();
                         for (byte b = (byte) is.read(); b > -1; b = (byte) is.read()) {
                             //System.out.print((char) b);
